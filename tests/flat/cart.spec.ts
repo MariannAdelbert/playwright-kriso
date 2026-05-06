@@ -65,7 +65,15 @@ test.describe('Add Books to Shopping Cart', () => {
 
   await addButtons.nth(1).click({ force: true });
   await expect(page.locator('div.msg.msg-info')).toContainText(/lisati ostukorvi/i);
-  await expect(page.locator('span.cart-units').first()).toHaveText(/2/);
+  const cartUnits = page.locator('span.cart-units').first();
+
+await expect(cartUnits).toBeVisible({ timeout: 20000 });
+
+await expect(async () => {
+  const text = await cartUnits.textContent();
+  const number = Number((text || '').replace(/\D/g, ''));
+  expect(number).toBe(2);
+}).toPass({ timeout: 20000 });
   await expect(page.getByRole('link', { name: /ostukorv/i }))
     .toContainText(/2/);
 });

@@ -7,14 +7,16 @@ export class BasePage {
   protected readonly searchButton: Locator;
 
   constructor(protected page: Page) {
-    this.logo = this.page.locator('.logo-icon');
+    this.logo = this.page.locator('.logo-icon').first();
     this.consentButton = this.page.getByRole('button', { name: 'Nõustun' });
     this.searchInput = this.page.locator('#top-search-text');
     this.searchButton = this.page.locator('#top-search-btn-wrap');
   }
 
   async acceptCookies() {
-    await this.consentButton.click();
+    if (await this.consentButton.isVisible().catch(() => false)) {
+      await this.consentButton.click();
+    }
   }
 
   async verifyLogo() {
@@ -22,7 +24,6 @@ export class BasePage {
   }
 
   async searchByKeyword(keyword: string) {
-    await this.searchInput.click();
     await this.searchInput.fill(keyword);
     await this.searchButton.click();
   }
